@@ -1,0 +1,118 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* DESIGN SYSTEM
+   Central spacing scale and color palette, referenced everywhere
+   below via var(). Change a value once here and it updates
+   site-wide. Colors use a desaturated dark-navy palette (no pure
+   black/white) to keep contrast calm rather than harsh. */
+:root {
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+
+  --bg: #14181f;
+  --card: #1c212b;
+  --accent: #5b8def;
+  --accent-hover: #4676d1;
+  --focus-fill: #2f5aa8;
+  --text: #e4e6eb;
+  --subtext: #9aa1ac;
+}
+
+/* GLOBAL */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Below 600px (phones), stack the logo above the nav buttons
+   instead of keeping them side by side, and let buttons fill the
+   row equally so they stay easy to tap. */
+@media (max-width: 600px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .nav-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  button {
+    flex: 1;
+  }
+}
+
+button {
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: 6px;
+  background-color: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-size: 1rem; /* rem scales with the user's browser font-size setting */
+}
+
+button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Focus indicator for keyboard navigation (Tab key).
+   :focus-visible only triggers on keyboard focus, not mouse clicks,
+   so it stays out of the way for mouse users while still giving
+   keyboard users a clear, visible marker of the active button. */
+button:focus-visible {
+  background-color: var(--focus-fill);
+  color: white;
+  outline: none;
+}
+
+/* CONTENT */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* CARDS */
+.card {
+  background-color: var(--card);
+  padding: var(--space-md);
+  border-radius: 10px;
+}
+
+/* TEXT */
+h2 {
+  margin-bottom: var(--space-sm);
+}
+
+p {
+  color: var(--subtext);
+}
