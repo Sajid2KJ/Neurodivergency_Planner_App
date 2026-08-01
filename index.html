@@ -12,6 +12,8 @@
  
     <header class="navbar">
       <h1>Neuro Planner</h1>
+      <!-- data-target will be read by JS (Checkpoint 2) to show/hide
+           the matching <section> below without a page reload. -->
       <div class="nav-buttons">
         <button data-target="home">Home</button>
         <button data-target="planner">Planner</button>
@@ -21,22 +23,32 @@
  
     <main class="content">
       <!-- Each <section> id matches a button's data-target above. -->
-      <section id="home" class="card">
+      <section id="home" class="card section">
         <h2>Home</h2>
         <p>Overview of your day and focus.</p>
       </section>
  
-      <section id="planner" class="card">
+      <section id="planner" class="card section hidden">
         <h2>Planner</h2>
-        <p>Your tasks will appear here.</p>
+        <div class="task-input-row">
+          <input type="text" id="task-input" placeholder="Add a task..." />
+          <button id="add-task-btn">Add</button>
+        </div>
+        <div class="task-history-controls">
+          <button id="undo-btn">Undo</button>
+          <button id="redo-btn">Redo</button>
+        </div>
+        <ul id="task-list"></ul>
       </section>
  
-      <section id="links" class="card">
+      <section id="links" class="card section hidden">
         <h2>Help & Resources</h2>
         <p>Tools and guidance for staying on track.</p>
       </section>
     </main>
  
   </div>
+ 
+  <script src="script.js"></script>
 </body>
 </html>
