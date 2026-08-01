@@ -101,11 +101,105 @@ button:focus-visible {
   gap: var(--space-lg);
 }
 
+/* JS toggles this class to show/hide sections without a page reload */
+.hidden {
+  display: none;
+}
+
+/* JS toggles this on the nav button that matches the visible section */
+.nav-buttons button.active {
+  background-color: var(--accent-hover);
+}
+
 /* CARDS */
 .card {
   background-color: var(--card);
   padding: var(--space-md);
   border-radius: 10px;
+}
+
+/* PLANNER TASK UI */
+.task-input-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.task-input-row input {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 6px;
+  border: 1px solid var(--subtext);
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.task-input-row input:focus-visible {
+  outline: 2px solid var(--focus-fill);
+  outline-offset: 2px;
+}
+
+.task-history-controls {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.task-history-controls button {
+  background-color: transparent;
+  color: var(--subtext);
+  border: 1px solid var(--subtext);
+  font-size: 0.9rem;
+}
+
+.task-history-controls button:hover {
+  color: var(--text);
+  border-color: var(--text);
+  background-color: transparent;
+}
+
+.task-history-controls button:focus-visible {
+  background-color: transparent;
+  outline: 2px solid var(--focus-fill);
+  outline-offset: 2px;
+}
+#task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+#task-list li {
+  background-color: var(--bg);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 6px;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.delete-task-btn {
+  background-color: transparent;
+  color: var(--subtext);
+  border: 1px solid var(--subtext);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.delete-task-btn:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.delete-task-btn:focus-visible {
+  outline: 2px solid var(--focus-fill);
+  outline-offset: 2px;
 }
 
 /* TEXT */
