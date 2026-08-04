@@ -7,6 +7,8 @@ const sections = document.querySelectorAll(".section");
 // O(n) over sections+buttons per call; fine at this scale, revisit
 // if the tab count grows significantly.
 function showSection(targetId) {
+  localStorage.setItem("neuro-planner-active-section", targetId);
+
   sections.forEach((section) => {
     section.classList.toggle("hidden", section.id !== targetId);
   });
@@ -25,21 +27,45 @@ navButtons.forEach((button) => {
   });
 });
 
-// Set initial active view on load.
-showSection("home");
+// Restore whichever section was active on the user's last visit;
+// default to Home on a first-ever visit (nothing saved yet).
+showSection(localStorage.getItem("neuro-planner-active-section") || "home");
 
 // --- Task state (Checkpoint 4: in-memory array as source of truth) ---
 const taskInput = document.querySelector("#task-input");
 const addTaskBtn = document.querySelector("#add-task-btn");
 const undoBtn = document.querySelector("#undo-btn");
 const redoBtn = document.querySelector("#redo-btn");
+const clearAllBtn = document.querySelector("#clear-all-btn");
 const taskList = document.querySelector("#task-list");
-let tasks = [];
+
+// --- Persistence (Checkpoint 5: localStorage) ---
+const STORAGE_KEY = "neuro-planner-tasks";
+
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+function loadTasks() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return [];
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    // Malformed/corrupted storage value — fall back to empty rather
+    // than throwing and breaking the whole page on load.
+    return [];
+  }
+}
+
+let tasks = loadTasks();
 
 // Action-stack based undo/redo. Each entry records enough info to
 // reverse a single add or delete. A new action always clears
 // redoStack — standard undo/redo convention (you can't redo past a
-// fresh action).
+// fresh action). Session-only by design — not persisted.
 let undoStack = [];
 let redoStack = [];
 
@@ -59,7 +85,20 @@ function renderTasks() {
     li.className = "task-item";
 
     const taskText = document.createElement("span");
-    taskText.textContent = task;
+
+    // Checkpoint 6: simple prioritization. The oldest still-open task
+    // (array index 0) is treated as "next up" and gets a visible
+    // badge + highlight — not color alone, so it's still distinguishable
+    // without relying on color perception.
+    if (index === 0) {
+      li.classList.add("next-task");
+      const badge = document.createElement("span");
+      badge.className = "next-task-badge";
+      badge.textContent = "Up next";
+      taskText.appendChild(badge);
+    }
+
+    taskText.appendChild(document.createTextNode(task));
 
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
@@ -70,6 +109,8 @@ function renderTasks() {
     li.appendChild(deleteBtn);
     taskList.appendChild(li);
   });
+
+  clearAllBtn.disabled = tasks.length === 0;
 }
 
 function addTask() {
@@ -79,6 +120,7 @@ function addTask() {
   const index = tasks.length;
   tasks.push(text);
   recordAction({ type: "add", task: text, index });
+  saveTasks();
   renderTasks();
 
   taskInput.value = "";
@@ -88,6 +130,20 @@ function addTask() {
 function deleteTask(index) {
   const [removed] = tasks.splice(index, 1);
   recordAction({ type: "delete", task: removed, index });
+  saveTasks();
+  renderTasks();
+}
+
+// Wipes the whole list in one action. Recorded as a single undoable
+// step carrying a full snapshot of the prior list, rather than as
+// N separate delete actions — undo restores everything at once.
+function clearAllTasks() {
+  if (tasks.length === 0) return;
+
+  const snapshot = [...tasks];
+  tasks = [];
+  recordAction({ type: "clear", tasks: snapshot });
+  saveTasks();
   renderTasks();
 }
 
@@ -99,9 +155,12 @@ function undo() {
     tasks.splice(action.index, 1);
   } else if (action.type === "delete") {
     tasks.splice(action.index, 0, action.task);
+  } else if (action.type === "clear") {
+    tasks = [...action.tasks];
   }
 
   redoStack.push(action);
+  saveTasks();
   renderTasks();
 }
 
@@ -113,17 +172,25 @@ function redo() {
     tasks.splice(action.index, 0, action.task);
   } else if (action.type === "delete") {
     tasks.splice(action.index, 1);
+  } else if (action.type === "clear") {
+    tasks = [];
   }
 
   undoStack.push(action);
+  saveTasks();
   renderTasks();
 }
 
 addTaskBtn.addEventListener("click", addTask);
 undoBtn.addEventListener("click", undo);
 redoBtn.addEventListener("click", redo);
+clearAllBtn.addEventListener("click", clearAllTasks);
 
 // Allow Enter key as an alternative to clicking Add.
 taskInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addTask();
 });
+
+// Reflect whatever was loaded from localStorage immediately, rather
+// than waiting for the first add/delete to trigger a render.
+renderTasks();
