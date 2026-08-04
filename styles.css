@@ -28,7 +28,8 @@
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: Arial, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
 }
 
 .app {
@@ -164,6 +165,16 @@ button:focus-visible {
   outline: 2px solid var(--focus-fill);
   outline-offset: 2px;
 }
+
+.task-history-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.task-history-controls button:disabled:hover {
+  color: var(--subtext);
+  border-color: var(--subtext);
+}
 #task-list {
   list-style: none;
   display: flex;
@@ -200,6 +211,27 @@ button:focus-visible {
 .delete-task-btn:focus-visible {
   outline: 2px solid var(--focus-fill);
   outline-offset: 2px;
+}
+
+/* Applied only to the first item in the list (Checkpoint 6: simple
+   prioritization). Left border + slightly lighter background is
+   enough to draw the eye without relying on color alone — the
+   "Up next" badge text carries the same meaning for anyone who
+   can't distinguish the color difference. */
+#task-list li.next-task {
+  background-color: var(--focus-fill);
+  border-left: 4px solid var(--accent);
+}
+
+.next-task-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  opacity: 0.85;
+  margin-right: var(--space-sm);
 }
 
 /* TEXT */
